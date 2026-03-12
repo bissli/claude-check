@@ -15,15 +15,8 @@ Launch a **Haiku** agent to gather project context. The agent should:
    - Glob `~/.claude/plans/*.md` and read the most recently modified file (use `stat` to compare)
    - If no plan file found on disk, extract plan text from conversation context
 2. From the plan, list all source files it references (paths mentioned in the plan text)
-3. Glob for `.claude/rules/*.md` files. For each rule file:
-   a. Read it and parse the `globs:` list from its YAML frontmatter
-   b. Check whether any of those glob patterns match any file from the plan's source file list
-   c. Keep the rule file only if at least one pattern matches
-   d. From kept rule files, collect any `.claude/reference/` paths they mention
-4. Read the collected `.claude/reference/*.md` docs (only those referenced by matching rules). Do NOT read reference files that no matching rule points to.
-5. Read the root `CLAUDE.md` and any directory-level `CLAUDE.md` files found via glob `**/CLAUDE.md`
 
-Return: matched rules content, referenced docs content, all CLAUDE.md content, the full plan text, **the plan file path** (or null if from conversation context), a one-paragraph plan summary, and the list of referenced source files.
+Return: the full plan text, **the plan file path** (or null if from conversation context), a one-paragraph plan summary, and the list of referenced source files.
 
 <!-- Shared step: keep in sync across all plan-check commands -->
 ## Step 2: Codebase Mapping (Haiku agent)

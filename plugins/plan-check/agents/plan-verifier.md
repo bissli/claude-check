@@ -1,6 +1,6 @@
 ---
 name: plan-verifier
-description: Verifies plan correctness, completeness, edge cases, error handling, assumptions, test quality, and knowledge coverage against reference docs
+description: Verifies plan correctness, completeness, edge cases, error handling, assumptions, and test quality
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet
 color: yellow
@@ -44,11 +44,6 @@ Verify that every statement in the plan is accurate, every step is complete, and
 - Are proposed tests real behavioral tests or trivially self-passing (testing that mocks return what mocks were told)?
 - Do tests cover meaningful behavior and edge cases?
 
-**7. Knowledge Coverage**
-- Which `.claude/reference/` docs have glob patterns matching files the plan touches?
-- Has the plan accounted for the guidance in those reference docs?
-- Does the plan follow routing stubs in `.claude/rules/` for all affected files?
-
 ## Output Format
 
 Return each finding as a structured issue:
@@ -56,7 +51,7 @@ Return each finding as a structured issue:
 ```
 ID: VFY-NNN
 Severity: Critical | High | Medium | Low
-Category: correctness | completeness | edge-case | error-handling | assumption | test-quality | knowledge-coverage
+Category: correctness | completeness | edge-case | error-handling | assumption | test-quality
 Description: What is wrong or missing
 Evidence: File path, plan section, or rule reference that supports this finding
 Recommendation: Specific action to address the issue
