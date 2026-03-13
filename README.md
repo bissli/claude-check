@@ -6,9 +6,9 @@ A Claude Code plugin that validates implementation plans using parallel speciali
 
 Add the marketplace and install:
 
-```
-/plugin marketplace add bissli/claude-plan-check
-/plugin install plan-check@claude-plan-check
+```bash
+claude plugin marketplace add bissli/claude-plan-check \
+  && claude plugin install plan-check@claude-plan-check
 ```
 
 For local development:
@@ -77,28 +77,31 @@ Key differences in v2:
 - New agents: plan-verifier (VFY), breakage-analyst (BRK), test-reviewer (TST), simplification-analyst (SMP)
 - Removed agents: gap-analyst (GAP), code-impact-analyst (IMP), feasibility-risk-analyst (RSK)
 
+## Reinstall
+
+Clean removal and reinstall in one shot:
+
+```bash
+claude plugin uninstall plan-check@claude-plan-check \
+  && claude plugin marketplace remove claude-plan-check \
+  && rm -rf ~/.claude/plugins/cache/claude-plan-check \
+  && claude plugin marketplace add bissli/claude-plan-check \
+  && claude plugin install plan-check@claude-plan-check
+```
+
 ## Uninstallation
 
 To fully remove the plugin:
 
-1. Disable the plugin in Claude Code:
-   ```
-   /plugin uninstall plan-check@claude-plan-check
-   ```
+```bash
+claude plugin uninstall plan-check@claude-plan-check \
+  && claude plugin marketplace remove claude-plan-check \
+  && rm -rf ~/.claude/plugins/cache/claude-plan-check
+```
 
-2. Remove the marketplace registration:
-   ```
-   /plugin marketplace remove claude-plan-check
-   ```
-
-3. Delete the cached plugin files:
-   ```bash
-   rm -rf ~/.claude/plugins/cache/claude-plan-check
-   ```
-
-4. Verify removal -- open `~/.claude/settings.json` and confirm:
-   - `"plan-check@claude-plan-check"` is gone from `enabledPlugins`
-   - `"claude-plan-check"` is gone from `extraKnownMarketplaces`
+Verify removal -- open `~/.claude/settings.json` and confirm:
+- `"plan-check@claude-plan-check"` is gone from `enabledPlugins`
+- `"claude-plan-check"` is gone from `extraKnownMarketplaces`
 
 ## License
 
