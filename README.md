@@ -25,7 +25,7 @@ Four subcommands are available:
 /plan-check:verify     # Verify correctness, completeness, assumptions
 /plan-check:gap        # Analyze what existing code might break
 /plan-check:checklist  # Add or improve an implementation checklist
-/plan-check:deep       # Deep analysis: all 4 agents in parallel
+/plan-check:deep       # Deep analysis: all 5 agents + precedent scanning
 ```
 
 Reads the most recent plan from `~/.claude/plans/`. If no plan file is found, falls back to extracting plan text from conversation context. When the plan comes from conversation context, the amended plan is written to `~/.claude/plans/amended-plan.md`.
@@ -48,7 +48,7 @@ The updated plan IS the deliverable. No standalone report is produced.
 
 **`/plan-check:checklist`** launches the checklist-architect agent to evaluate or create an implementation checklist, then inserts it into the plan.
 
-**`/plan-check:deep`** is the most thorough analysis. It launches all 4 agents in parallel (plan-verifier, breakage-analyst, test-reviewer, simplification-analyst), deduplicates findings, then runs a second wave of Haiku agents to re-evaluate Critical and High findings. All confirmed amendments are applied to the plan.
+**`/plan-check:deep`** is the most thorough analysis. It launches 4 Sonnet agents in parallel (plan-verifier, breakage-analyst, test-reviewer, simplification-analyst) alongside a Haiku precedent discovery pass. The precedent candidates then feed into a Sonnet precedent-scanner that evaluates whether planned changes diverge from existing codebase patterns -- recommending the plan adopt existing approaches or refactor existing code to match better planned approaches. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. All confirmed amendments are applied to the plan.
 
 ## Agents
 
@@ -58,6 +58,7 @@ The updated plan IS the deliverable. No standalone report is produced.
 | **breakage-analyst**       | BRK    | red     | Caller breakage, interface changes, import cascades, test breakage |
 | **test-reviewer**          | TST    | cyan    | Test coverage, proposed test quality, missing scenarios, smells    |
 | **simplification-analyst** | SMP    | magenta | Code reuse, over-engineering, pattern conformance, consolidation   |
+| **precedent-scanner**      | PRC    | blue    | Codebase precedent, approach divergence, bidirectional improvement |
 | **checklist-architect**    | CHK    | green   | Checklist structure, completeness, item quality, phase ordering    |
 
 ## Plan Amendment Model
