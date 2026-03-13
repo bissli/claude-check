@@ -19,11 +19,10 @@ claude --plugin-dir ./claude-plan-check
 
 ## Usage
 
-Three subcommands are available:
+Two subcommands are available:
 
 ```
 /plan-check:fast       # Fast check: correctness, completeness, assumptions
-/plan-check:gap        # Analyze what existing code might break
 /plan-check:slow       # Slow analysis: all 5 agents + precedent scanning
 ```
 
@@ -42,8 +41,6 @@ The updated plan IS the deliverable. No standalone report is produced.
 ### Commands
 
 **`/plan-check:fast`** launches the plan-verifier agent for correctness, completeness, edge cases, error handling, assumptions, and test quality.
-
-**`/plan-check:gap`** launches the breakage-analyst agent to trace callers, detect interface changes, import cascades, shared state issues, and recommend regression tests.
 
 **`/plan-check:slow`** is the most thorough analysis. It launches 4 Sonnet agents in parallel (plan-verifier, breakage-analyst, test-reviewer, simplification-analyst) alongside a Haiku precedent discovery pass. The precedent candidates then feed into a Sonnet precedent-scanner that evaluates whether planned changes diverge from existing codebase patterns -- recommending the plan adopt existing approaches or refactor existing code to match better planned approaches. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. All confirmed amendments are applied to the plan.
 
@@ -69,10 +66,10 @@ In `/plan-check:slow`, the second wave of Haiku agents re-evaluates Critical and
 
 ## Migration from v1
 
-| v1 Command           | v2 Equivalent                          |
-| -------------------- | -------------------------------------- |
-| `/plan-check:all`    | `/plan-check:slow`                     |
-| `/plan-check:review` | `/plan-check:fast` + `/plan-check:gap` |
+| v1 Command           | v2 Equivalent      |
+| -------------------- | ------------------ |
+| `/plan-check:all`    | `/plan-check:slow` |
+| `/plan-check:review` | `/plan-check:slow` |
 
 Key differences in v2:
 - Commands edit the plan file directly instead of producing standalone reports
