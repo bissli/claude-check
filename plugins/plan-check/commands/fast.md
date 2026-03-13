@@ -1,10 +1,10 @@
 ---
-description: Verify plan correctness and update the plan to address all issues
+description: Fast plan check -- verify correctness and update the plan to address issues
 ---
 
-# Plan Check: Verify
+# Plan Check: Fast
 
-Verify an implementation plan for correctness, completeness, and assumptions, then update the plan to address all findings.
+Quick verification of an implementation plan for correctness, completeness, and assumptions, then update the plan to address all findings.
 
 ## Step 1: Verification
 

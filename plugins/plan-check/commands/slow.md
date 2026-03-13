@@ -1,8 +1,8 @@
 ---
-description: Deep analysis combining verification, breakage, test review, simplification, and precedent scanning
+description: Slow comprehensive analysis combining verification, breakage, test review, simplification, and precedent scanning
 ---
 
-# Plan Check: Deep Analysis
+# Plan Check: Slow Analysis
 
 Run a comprehensive multi-agent analysis with precedent scanning and second-wave validation, then update the plan to address all findings.
 
@@ -68,7 +68,7 @@ After all second-wave agents complete:
    - Add missing test items (from test-reviewer)
    - Simplify over-engineered steps (from simplification-analyst)
    - Adopt existing patterns or add refactoring steps (from precedent-scanner)
-5. Append a "Deep Analysis Notes" section listing all findings with:
+5. Append a "Slow Analysis Notes" section listing all findings with:
    - Finding ID, severity, description
    - Disposition: addressed | merged (with other finding ID) | downgraded (from original severity)
    - What changed in the plan

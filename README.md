@@ -22,10 +22,10 @@ claude --plugin-dir ./claude-plan-check
 Four subcommands are available:
 
 ```
-/plan-check:verify     # Verify correctness, completeness, assumptions
+/plan-check:fast       # Fast check: correctness, completeness, assumptions
 /plan-check:gap        # Analyze what existing code might break
 /plan-check:checklist  # Add or improve an implementation checklist
-/plan-check:deep       # Deep analysis: all 5 agents + precedent scanning
+/plan-check:slow       # Slow analysis: all 5 agents + precedent scanning
 ```
 
 Reads the most recent plan from `~/.claude/plans/`. If no plan file is found, falls back to extracting plan text from conversation context. When the plan comes from conversation context, the amended plan is written to `~/.claude/plans/amended-plan.md`.
@@ -42,13 +42,13 @@ The updated plan IS the deliverable. No standalone report is produced.
 
 ### Commands
 
-**`/plan-check:verify`** launches the plan-verifier agent for correctness, completeness, edge cases, error handling, assumptions, and test quality.
+**`/plan-check:fast`** launches the plan-verifier agent for correctness, completeness, edge cases, error handling, assumptions, and test quality.
 
 **`/plan-check:gap`** launches the breakage-analyst agent to trace callers, detect interface changes, import cascades, shared state issues, and recommend regression tests.
 
 **`/plan-check:checklist`** launches the checklist-architect agent to evaluate or create an implementation checklist, then inserts it into the plan.
 
-**`/plan-check:deep`** is the most thorough analysis. It launches 4 Sonnet agents in parallel (plan-verifier, breakage-analyst, test-reviewer, simplification-analyst) alongside a Haiku precedent discovery pass. The precedent candidates then feed into a Sonnet precedent-scanner that evaluates whether planned changes diverge from existing codebase patterns -- recommending the plan adopt existing approaches or refactor existing code to match better planned approaches. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. All confirmed amendments are applied to the plan.
+**`/plan-check:slow`** is the most thorough analysis. It launches 4 Sonnet agents in parallel (plan-verifier, breakage-analyst, test-reviewer, simplification-analyst) alongside a Haiku precedent discovery pass. The precedent candidates then feed into a Sonnet precedent-scanner that evaluates whether planned changes diverge from existing codebase patterns -- recommending the plan adopt existing approaches or refactor existing code to match better planned approaches. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. All confirmed amendments are applied to the plan.
 
 ## Agents
 
@@ -69,15 +69,15 @@ Each amendment specifies an operation (`add`, `replace`, `remove`, or `append-se
 
 ## Confidence Threshold
 
-In `/plan-check:deep`, the second wave of Haiku agents re-evaluates Critical and High findings. Findings below 60% confidence are filtered out after the second wave.
+In `/plan-check:slow`, the second wave of Haiku agents re-evaluates Critical and High findings. Findings below 60% confidence are filtered out after the second wave.
 
 ## Migration from v1
 
-| v1 Command              | v2 Equivalent                            |
-| ----------------------- | ---------------------------------------- |
-| `/plan-check:all`       | `/plan-check:deep`                       |
-| `/plan-check:review`    | `/plan-check:verify` + `/plan-check:gap` |
-| `/plan-check:checklist` | `/plan-check:checklist` (rewritten)      |
+| v1 Command              | v2 Equivalent                          |
+| ----------------------- | -------------------------------------- |
+| `/plan-check:all`       | `/plan-check:slow`                     |
+| `/plan-check:review`    | `/plan-check:fast` + `/plan-check:gap` |
+| `/plan-check:checklist` | `/plan-check:checklist` (rewritten)    |
 
 Key differences in v2:
 - Commands edit the plan file directly instead of producing standalone reports
