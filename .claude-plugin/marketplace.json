@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-plan-check",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Plan validation and improvement using parallel specialized agents that edit the plan directly to address all findings",
   "owner": {
     "name": "bissli"
@@ -10,7 +10,7 @@
     {
       "name": "plan-check",
       "description": "Plan validation and improvement using parallel specialized agents that edit the plan directly to address all findings",
-      "version": "2.2.0",
+      "version": "2.2.1",
       "source": "./plugins/plan-check",
       "category": "productivity"
     }

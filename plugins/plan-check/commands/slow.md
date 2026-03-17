@@ -6,6 +6,8 @@ description: Slow comprehensive analysis combining verification, breakage, test 
 
 Run a comprehensive multi-agent analysis with precedent scanning and second-wave validation, then update the plan to address all findings.
 
+**Output convention**: When launching an agent, print its model in brackets after the description, e.g. `Launching plan-verifier... [sonnet]` or `Launching precedent discovery... [haiku]`
+
 ## Step 1: First Wave (5 Sonnet agents + Haiku discovery, in parallel)
 
 Find the plan using this priority order:

@@ -6,6 +6,8 @@ description: Fast plan check -- verify correctness and update the plan to addres
 
 Quick verification of an implementation plan for correctness, completeness, and assumptions, then update the plan to address all findings.
 
+**Output convention**: When launching an agent, print its model in brackets after the description, e.g. `Launching plan-verifier... [sonnet]`
+
 ## Step 1: Verification
 
 Find the plan using this priority order:

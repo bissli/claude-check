@@ -1,7 +1,7 @@
 {
   "name": "plan-check",
   "description": "Plan validation and improvement using parallel specialized agents that edit the plan directly to address all findings",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "author": {
     "name": "bissli"
   }
