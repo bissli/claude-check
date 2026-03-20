@@ -72,7 +72,7 @@ After all analysis agents complete (from Steps 3 and 4):
 
 **Plan mode**:
 1. Read the plan file path from Step 1
-2. Collect all findings and plan amendments from Steps 3 and 4
+2. Collect all deduplicated findings and plan amendments from Step 5
 3. Apply ALL amendments (every severity level -- Low through Critical), processing in severity order (Critical first, then High, Medium, Low). If two amendments target the same plan section with incompatible operations, apply the higher-severity amendment and print a note flagging the conflict.
 4. Address all findings in the plan (only for agents that ran):
    - Fix correctness issues (from verify-agent)

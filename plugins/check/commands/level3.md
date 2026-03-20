@@ -1,5 +1,5 @@
 ---
-description: verify + breakage + tests + efficiency + hawk/dove/judge + precedent + database + second-wave validation
+description: verify + breakage + tests + hawk/dove/judge + efficiency + database + precedent + second-wave validation
 ---
 
 # Check: Level 3
@@ -75,7 +75,9 @@ The agent returns findings in PRC-NNN format.
 
 ## Step 4: Refactoring Judgment (Sonnet agent)
 
-After BOTH Step 2 (hawk + dove) AND Step 3 (precedent) complete, launch the **refactor-judge-agent** (RFJ prefix). If Step 3 was skipped (no candidates), pass an empty `=== Precedent findings (PRC) ===` block. Pass a single concatenated input block:
+**Skip logic**: If both hawk and dove produce zero findings, skip the judge entirely. If only one side produces findings, still run the judge -- it evaluates findings against precedent even without counterarguments.
+
+After BOTH refactor-hawk-agent and refactor-dove-agent (from Step 2) AND Step 3 (precedent) complete, launch the **refactor-judge-agent** (RFJ prefix). If Step 3 was skipped (no candidates), pass an empty `=== Precedent findings (PRC) ===` block. Pass a single concatenated input block:
 
 **Plan mode:**
 ```
@@ -95,8 +97,6 @@ After BOTH Step 2 (hawk + dove) AND Step 3 (precedent) complete, launch the **re
 **Code mode:** Same structure but with DIFF_TEXT instead of plan text.
 
 The judge evaluates hawk, dove, and precedent findings on engineering merits and renders verdicts (adopt-hawk, adopt-hawk-scoped, preserve-and-align, preserve) per finding. It returns findings in RFJ-NNN format with Verdict, Reasoning, and Style note fields.
-
-**Skip logic**: If both hawk and dove produce zero findings, skip the judge entirely. If only one side produces findings, still run the judge -- it evaluates findings against precedent even without counterarguments.
 
 **Truncation mitigation**: If combined input exceeds reasonable size, summarize hawk/dove findings to key claims (ID, severity, one-line description, file paths) rather than passing full text. The judge has tool access and can read referenced files directly.
 
@@ -138,7 +138,7 @@ After all second-wave agents complete:
 
 **Plan mode**:
 1. Read the plan file path from Step 1
-2. Collect all confirmed amendments from all agents
+2. Collect all confirmed amendments -- Critical/High from Step 6 (second-wave validated), Medium/Low from Step 5 (deduplicated, not re-evaluated in second wave)
 3. Apply ALL amendments (every severity level -- Low through Critical), processing in severity order (Critical first, then High, Medium, Low). If two amendments target the same plan section with incompatible operations, apply the higher-severity amendment and print a note flagging the conflict.
 4. Address all findings in the plan (only for agents that ran):
    - Fix correctness issues (from verify-agent)

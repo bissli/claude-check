@@ -19,7 +19,7 @@ Quick verification for correctness, completeness, and assumptions. In plan mode,
 
 **Scope context**: Produce SCOPE_SUMMARY based on MODE:
 - **Code mode**: Run `git diff --stat DIFF_REF` (where DIFF_REF is the same git ref used in Step 1: `HEAD` if item 2 triggered, or `main...HEAD`/`master...HEAD` if item 3 triggered).
-- **Plan mode**: Count section headings (H2/H3) and total lines. Do NOT run git diff -- there is no diff in plan mode.
+- **Plan mode**: Count section headings (H2/H3) and total lines (e.g., "Plan has 8 sections, 142 lines"). Scan for a "Files to Modify" or "Files to Change" section and count bullet entries if present; otherwise omit the file count. Do NOT run git diff -- there is no diff in plan mode.
 
 Launch the **verify-agent** agent. Prepend its input with the scope calibration header:
 
@@ -46,8 +46,11 @@ The agent will return findings in VFY-NNN format.
 1. Read the plan file path from Step 1
 2. Collect all findings and plan amendments from Step 2
 3. Apply ALL amendments (every severity level -- Low through Critical), processing in severity order (Critical first, then High, Medium, Low). If two amendments target the same section with incompatible operations, apply the higher-severity amendment and print a note flagging the conflict.
-4. Append a "Verification Notes" section listing all changes made, with finding IDs and severity levels
-5. Print a brief summary: count of findings by severity, confirmation that the plan was updated
+4. Append a "Level 1 Analysis Notes" section listing all findings with:
+   - Finding ID, severity, description
+   - Disposition: addressed
+   - What changed in the plan
+5. Print summary: total findings by severity, how many addressed, confirmation that the plan was updated
 
 **Code mode**:
 1. Collect all findings from Step 2
