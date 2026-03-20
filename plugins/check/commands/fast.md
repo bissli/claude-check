@@ -17,7 +17,20 @@ Quick verification for correctness, completeness, and assumptions. In plan mode,
 
 ## Step 2: Verification
 
-Launch the **verify-agent** agent, passing it:
+**Scope context**: Produce SCOPE_SUMMARY based on MODE:
+- **Code mode**: Run `git diff --stat DIFF_REF` (where DIFF_REF is the same git ref used in Step 1: `HEAD` if item 2 triggered, or `main...HEAD`/`master...HEAD` if item 3 triggered).
+- **Plan mode**: Count section headings (H2/H3) and total lines. Do NOT run git diff -- there is no diff in plan mode.
+
+Launch the **verify-agent** agent. Prepend its input with the scope calibration header:
+
+```
+Scope context: <SCOPE_SUMMARY>
+Calibrate your analysis to the scope of these changes. If the change is
+outside your analysis domain, return no findings rather than forcing
+low-value observations.
+```
+
+Pass it:
 - **Plan mode**: the full plan text and the plan file path
 - **Code mode**: the DIFF_TEXT
 

@@ -1,6 +1,6 @@
 ---
 name: verify-agent
-description: Verifies correctness, completeness, edge cases, error handling, assumptions, and test quality
+description: Verifies correctness, completeness, edge cases, error handling, assumptions, test quality, and over-engineering
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet
 color: yellow
@@ -52,6 +52,12 @@ In plan mode, verify that described steps will produce the intended result. In c
 - Are proposed tests real behavioral tests or trivially self-passing (testing that mocks return what mocks were told)?
 - Do tests cover meaningful behavior and edge cases?
 
+**7. Over-Engineering**
+- Do the changes introduce abstractions that are only used once?
+- Are there simpler approaches that achieve the same result?
+- Are there unnecessary configuration, feature flags, or extension points?
+- Are there premature generalizations (building for hypothetical future needs)?
+
 ## Output Format
 
 Return each finding as a structured issue:
@@ -59,7 +65,7 @@ Return each finding as a structured issue:
 ```
 ID: VFY-NNN
 Severity: Critical | High | Medium | Low
-Category: correctness | completeness | edge-case | error-handling | assumption | test-quality
+Category: correctness | completeness | edge-case | error-handling | assumption | test-quality | over-engineering
 Description: What is wrong or missing
 Evidence: File path, section, or rule reference that supports this finding
 Recommendation: Specific action to address the issue
