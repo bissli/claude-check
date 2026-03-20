@@ -1,8 +1,8 @@
 ---
-description: Comprehensive analysis combining verification, breakage, test review, refactoring judgment (hawk/dove/judge triad), and precedent scanning
+description: verify + breakage + tests + efficiency + hawk/dove/judge + precedent + database + second-wave validation
 ---
 
-# Check: Slow Analysis
+# Check: Level 3
 
 Run a comprehensive multi-agent analysis with precedent scanning and second-wave validation. In plan mode, updates the plan to address findings. In code mode, reports findings on the diff.
 
@@ -185,7 +185,7 @@ After all second-wave agents complete:
    - Adopt existing patterns or add refactoring steps (from precedent-agent, trivial + full suite)
    - Address data concerns or add data verification steps (from database-agent, full suite plan mode only)
    - Address efficiency concerns (from efficiency-agent, full suite only)
-5. Append a "Slow Analysis Notes" section listing all findings with:
+5. Append a "Level 3 Analysis Notes" section listing all findings with:
    - Finding ID, severity, description
    - Disposition: addressed | merged (with other finding ID) | downgraded (from original severity)
    - What changed in the plan

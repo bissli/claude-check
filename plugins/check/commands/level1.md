@@ -1,8 +1,8 @@
 ---
-description: Fast check -- verify correctness and update the plan or report code issues
+description: verify
 ---
 
-# Check: Fast
+# Check: Level 1
 
 Quick verification for correctness, completeness, and assumptions. In plan mode, updates the plan to address findings. In code mode, reports findings on the diff.
 
