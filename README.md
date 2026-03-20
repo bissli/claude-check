@@ -54,7 +54,7 @@ Every command follows the same pattern:
 
 **`/check:level2`** launches 5 agents in parallel: verify-agent, simplify-agent (reuse + quality + efficiency), breakage-agent, tests-agent, and Haiku precedent discovery. If precedent candidates are found, a Sonnet precedent-agent evaluates pattern divergence. After deduplication, findings are applied to the plan (plan mode) or printed as a report (code mode). No hawk/dove/judge triad, no haiku classifier, no second-wave validation.
 
-**`/check:level3`** is the most thorough analysis. A Haiku pre-classifier first determines scope: trivial changes (targeted fixes, renames, minor additions) get verify-agent, breakage-agent, and precedent discovery only; non-trivial changes get the full suite. The full suite launches 6 Sonnet agents in plan mode (verify-agent, breakage-agent, tests-agent, refactor-hawk-agent, refactor-dove-agent, database-agent) or 5 in code mode (no database-agent), plus efficiency-agent and Haiku precedent discovery. The precedent candidates feed into a Sonnet precedent-agent that evaluates pattern divergence. Then the refactor-judge-agent receives hawk, dove, and precedent findings to render verdicts on each refactoring proposal. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. In plan mode, all confirmed amendments are applied to the plan. In code mode, findings are printed as a report.
+**`/check:level3`** is the most thorough analysis. It launches 8 agents in plan mode (verify-agent, breakage-agent, tests-agent, refactor-hawk-agent, refactor-dove-agent, database-agent, efficiency-agent, and Haiku precedent discovery) or 7 in code mode (no database-agent). The precedent candidates feed into a Sonnet precedent-agent that evaluates pattern divergence. Then the refactor-judge-agent receives hawk, dove, and precedent findings to render verdicts on each refactoring proposal. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. In plan mode, all confirmed amendments are applied to the plan. In code mode, findings are printed as a report.
 
 ## Agents
 
@@ -82,8 +82,6 @@ In code mode, no amendments are produced. Each finding's Recommendation field is
 ## Scope-Aware Calibration
 
 All agents receive a scope context header (git diff summary or plan size metrics) and are instructed to calibrate analysis depth accordingly. Small changes get proportionally focused analysis; agents return no findings when the change is outside their domain.
-
-`/check:level3` adds a Haiku pre-classifier gate before launching agents. It classifies the change as TRIVIAL or NON-TRIVIAL. Trivial changes (targeted fixes, renames, minor additions) get verify-agent, breakage-agent, and precedent discovery only. Non-trivial changes get the full agent suite. Defaults to non-trivial when uncertain.
 
 ## Confidence Threshold
 
