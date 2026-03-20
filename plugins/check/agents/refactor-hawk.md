@@ -41,6 +41,7 @@ You receive one of:
 **5. Pattern Promotion**
 - Should a local pattern be promoted to a codebase-wide convention?
 - Are there new shared utilities worth creating when the same pattern appears 2+ times?
+- Copy-paste with slight variation: near-duplicate code blocks that differ only in minor details and should be unified into a single parameterized implementation
 - Is there dead code, unused parameters, or vestigial patterns to eliminate?
 
 Push hard: propose refactorings even when they cross file boundaries and touch stable code. "While you're here" refactoring prevents tech debt accumulation. If a simpler library, design pattern, or architecture exists, argue for switching.

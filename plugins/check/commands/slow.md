@@ -64,7 +64,7 @@ After these complete, skip Step 4 (judge) and proceed to Step 3 (precedent-agent
 
 **Full agent set** (from NON-TRIVIAL classification):
 
-**Plan mode** -- launch all 7 tasks in parallel:
+**Plan mode** -- launch all 8 tasks in parallel:
 
 1. **verify-agent** (VFY prefix): Full verification -- correctness, completeness, edge cases, error handling, assumptions. If the project has tests (glob for `test_*`, `*_test.*`, `*_spec.*`, `tests/`, `__tests__/`, `spec/` patterns), emphasize test quality.
 
@@ -78,16 +78,19 @@ After these complete, skip Step 4 (judge) and proceed to Step 3 (precedent-agent
 
 6. **database-agent** (DAT prefix): If the plan references or implies a database or data store, check whether adequate data analysis (before/after impact, schema inspection, affected row counts, etc.) has already been performed. If gaps exist, run read-only queries to fill them. If the plan has no database involvement, return no findings.
 
-7. **Precedent discovery** (Haiku agent): For each file in the changes, search the codebase for similar implementations. For each change, grep for similar function names, class names, patterns, imports, and approaches. Build a candidate list pairing each change with existing codebase locations that solve similar problems. Return the candidate list with file paths and brief descriptions of each existing approach.
+7. **efficiency-agent** (EFF prefix): Efficiency analysis -- unnecessary work, missed concurrency, hot-path bloat, no-op updates, TOCTOU anti-patterns, memory issues, overly broad operations.
 
-**Code mode** -- launch 6 tasks in parallel (no database-agent):
+8. **Precedent discovery** (Haiku agent): For each file in the changes, search the codebase for similar implementations. For each change, grep for similar function names, class names, patterns, imports, and approaches. Build a candidate list pairing each change with existing codebase locations that solve similar problems. Return the candidate list with file paths and brief descriptions of each existing approach.
+
+**Code mode** -- launch 7 tasks in parallel (no database-agent):
 
 1. **verify-agent** (VFY prefix): Same as above.
 2. **breakage-agent** (BRK prefix): Same as above.
 3. **tests-agent** (TST prefix): Same as above.
 4. **refactor-hawk-agent** (RHK prefix): Same as above.
 5. **refactor-dove-agent** (RDV prefix): Same as above.
-6. **Precedent discovery** (Haiku agent): Same as above.
+6. **efficiency-agent** (EFF prefix): Same as above.
+7. **Precedent discovery** (Haiku agent): Same as above.
 
 ## Step 3: Precedent Analysis (Sonnet agent)
 
@@ -138,7 +141,7 @@ The judge evaluates hawk, dove, and precedent findings on engineering merits and
 
 After all analysis agents complete (from Steps 2, 3, and 4):
 
-1. Collect all findings from all agents into a single list (VFY, BRK, TST, RHK, RDV, DAT, PRC, RFJ -- only those that ran)
+1. Collect all findings from all agents into a single list (VFY, BRK, TST, RHK, RDV, DAT, EFF, PRC, RFJ -- only those that ran)
 2. **Deduplicate** (skip rules for agents that did not run):
    - PRC findings that the judge explicitly addressed in an RFJ verdict are marked "subsumed by RFJ-NNN" -- not merged as duplicates, since the verdict context must be preserved
    - RHK and RDV findings on the same file/section that reach opposite conclusions are NOT deduplicated -- they are opposing arguments the judge already adjudicated; keep both in the internal dedup list for audit purposes (they are suppressed from final output per Step 7), noting the RFJ verdict that resolved them
@@ -181,6 +184,7 @@ After all second-wave agents complete:
    - Apply refactoring recommendations (from refactor-judge-agent, full suite only)
    - Adopt existing patterns or add refactoring steps (from precedent-agent, trivial + full suite)
    - Address data concerns or add data verification steps (from database-agent, full suite plan mode only)
+   - Address efficiency concerns (from efficiency-agent, full suite only)
 5. Append a "Slow Analysis Notes" section listing all findings with:
    - Finding ID, severity, description
    - Disposition: addressed | merged (with other finding ID) | downgraded (from original severity)
@@ -191,7 +195,7 @@ RHK and RDV findings do NOT appear in the final plan mode output -- they are int
 
 **Code mode**:
 1. Collect all confirmed findings from all agents
-2. Print a findings report grouped by agent prefix (only those that ran -- e.g., VFY, BRK, PRC for trivial; VFY, BRK, TST, RFJ, PRC for full suite), then by severity within each group. RHK and RDV findings are NOT listed separately -- they are intermediate inputs to the judge.
+2. Print a findings report grouped by agent prefix (only those that ran -- e.g., VFY, BRK, PRC for trivial; VFY, BRK, TST, EFF, RFJ, PRC for full suite), then by severity within each group. RHK and RDV findings are NOT listed separately -- they are intermediate inputs to the judge.
 3. For each finding, print the ID, severity, category, description, evidence, and recommendation. For RFJ findings, also print the Verdict, Reasoning, and Style note fields.
 4. Print a summary: total findings by severity across all agents, how many confirmed/downgraded/filtered
 5. Do NOT edit any files

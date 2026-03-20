@@ -58,6 +58,11 @@ In plan mode, verify that described steps will produce the intended result. In c
 - Are there unnecessary configuration, feature flags, or extension points?
 - Are there premature generalizations (building for hypothetical future needs)?
 
+**8. Structural Debt**
+- Redundant state: state that duplicates existing state, cached values that could be derived on demand
+- Parameter sprawl: functions growing new parameters instead of being generalized or accepting a config object
+- Stringly-typed code: using raw strings where constants, enums, or typed values already exist in the codebase
+
 ## Output Format
 
 Return each finding as a structured issue:
@@ -65,7 +70,7 @@ Return each finding as a structured issue:
 ```
 ID: VFY-NNN
 Severity: Critical | High | Medium | Low
-Category: correctness | completeness | edge-case | error-handling | assumption | test-quality | over-engineering
+Category: correctness | completeness | edge-case | error-handling | assumption | test-quality | over-engineering | structural-debt
 Description: What is wrong or missing
 Evidence: File path, section, or rule reference that supports this finding
 Recommendation: Specific action to address the issue
