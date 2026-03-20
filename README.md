@@ -51,18 +51,20 @@ Every command follows the same pattern:
 
 **`/check:fast`** launches the verify agent for correctness, completeness, edge cases, error handling, assumptions, and test quality. In plan mode, updates the plan. In code mode, prints findings.
 
-**`/check:slow`** is the most thorough analysis. In plan mode, it launches 5 Sonnet agents in parallel (verify-agent, breakage-agent, tests-agent, simplify-agent, database-agent) alongside a Haiku precedent discovery pass. In code mode, it launches 4 Sonnet agents (no database-agent) plus Haiku discovery. The precedent candidates then feed into a Sonnet precedent-agent that evaluates whether changes diverge from existing codebase patterns. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. In plan mode, all confirmed amendments are applied to the plan. In code mode, findings are printed as a report.
+**`/check:slow`** is the most thorough analysis. In plan mode, it launches 6 Sonnet agents in parallel (verify-agent, breakage-agent, tests-agent, refactor-hawk-agent, refactor-dove-agent, database-agent) alongside a Haiku precedent discovery pass. In code mode, it launches 5 Sonnet agents (no database-agent) plus Haiku discovery. The precedent candidates feed into a Sonnet precedent-agent that evaluates pattern divergence. Then the refactor-judge-agent receives hawk, dove, and precedent findings to render verdicts on each refactoring proposal. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. In plan mode, all confirmed amendments are applied to the plan. In code mode, findings are printed as a report.
 
 ## Agents
 
-| Agent               | Prefix | Color  | Focus                                                              |
-| ------------------- | ------ | ------ | ------------------------------------------------------------------ |
-| **verify-agent**    | VFY    | yellow | Correctness, completeness, edge cases, assumptions, test quality   |
-| **breakage-agent**  | BRK    | red    | Caller breakage, interface changes, import cascades, test breakage |
-| **tests-agent**     | TST    | cyan   | Test coverage, proposed test quality, missing scenarios, smells    |
-| **simplify-agent**  | SMP    | purple | Code reuse, over-engineering, pattern conformance, consolidation   |
-| **precedent-agent** | PRC    | blue   | Codebase precedent, approach divergence, bidirectional improvement |
-| **database-agent**  | DAT    | green  | Database impact, schema concerns, data integrity (plan mode only)  |
+| Agent                    | Prefix | Color  | Focus                                                                  |
+| ------------------------ | ------ | ------ | ---------------------------------------------------------------------- |
+| **verify-agent**         | VFY    | yellow | Correctness, completeness, edge cases, assumptions, test quality       |
+| **breakage-agent**       | BRK    | red    | Caller breakage, interface changes, import cascades, test breakage     |
+| **tests-agent**          | TST    | cyan   | Test coverage, proposed test quality, missing scenarios, smells        |
+| **refactor-hawk-agent**  | RHK    | orange | Cross-file architectural refactoring, consolidation, pattern promotion |
+| **refactor-dove-agent**  | RDV    | pink   | Within-file preservation, scope containment, risk assessment           |
+| **refactor-judge-agent** | RFJ    | purple | Arbitrates hawk/dove/precedent, renders style evolution verdicts       |
+| **precedent-agent**      | PRC    | blue   | Codebase precedent, approach divergence, bidirectional improvement     |
+| **database-agent**       | DAT    | green  | Database impact, schema concerns, data integrity (plan mode only)      |
 
 ## Plan Amendment Model
 
