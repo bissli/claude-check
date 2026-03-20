@@ -1,0 +1,8 @@
+{
+  "name": "check",
+  "description": "Analyzes implementation plans or code changes using parallel specialized agents",
+  "version": "3.0.0",
+  "author": {
+    "name": "bissli"
+  }
+}

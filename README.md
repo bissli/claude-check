@@ -1,20 +1,33 @@
-# claude-plan-check
+# claude-check
 
-A Claude Code plugin that validates implementation plans using parallel specialized agents and **edits the plan directly** to address all findings.
+A Claude Code plugin that analyzes implementation plans or code changes using parallel specialized agents.
+
+## Modes
+
+Auto-detected based on context:
+
+- **Plan mode**: system prompt contains a plan file path (plan mode injects this) -- agents analyze the plan and edit it directly to address findings
+- **Code mode**: no plan in system prompt, but git diff has changes -- agents analyze the diff and report findings
+
+Detection order:
+1. Plan file path in system prompt → plan mode
+2. `git diff HEAD` has changes → code mode
+3. `git diff main...HEAD` (branch commits) → code mode
+4. Nothing found → error, stop
 
 ## Installation
 
 Add the marketplace and install:
 
 ```bash
-claude plugin marketplace add bissli/claude-plan-check \
-  && claude plugin install plan-check@claude-plan-check
+claude plugin marketplace add bissli/claude-check \
+  && claude plugin install check@claude-check
 ```
 
 For local development:
 
 ```
-claude --plugin-dir ./claude-plan-check
+claude --plugin-dir ./claude-check
 ```
 
 ## Usage
@@ -22,86 +35,54 @@ claude --plugin-dir ./claude-plan-check
 Two subcommands are available:
 
 ```
-/plan-check:fast       # Fast check: correctness, completeness, assumptions
-/plan-check:slow       # Slow analysis: all 5 agents + precedent scanning
+/check:fast       # Fast check: correctness, completeness, assumptions
+/check:slow       # Slow analysis: all agents + precedent scanning
 ```
-
-If the system prompt includes a plan file path (plan mode injects this), that path is used directly. Otherwise, reads the most recent plan from `~/.claude/plans/`. If no plan file is found, falls back to extracting plan text from conversation context. When the plan comes from conversation context, the amended plan is written to `~/.claude/plans/amended-plan.md`.
 
 ## How It Works
 
 Every command follows the same pattern:
 
-1. **Find the plan** -- the parent session finds the plan via system-prompt path, glob fallback, or conversation context
-2. **Agent analysis** (Sonnet) -- specialized agents receive the plan text and read source files directly as needed, returning findings with plan amendments
-3. **Update plan** -- the orchestrating command applies all amendments directly to the plan file
-
-The updated plan IS the deliverable. No standalone report is produced.
+1. **Detect input** -- auto-detect plan mode or code mode
+2. **Agent analysis** (Sonnet) -- specialized agents receive the plan text or diff and read source files directly as needed, returning structured findings
+3. **Process output** -- plan mode: apply all amendments to the plan file; code mode: print findings report
 
 ### Commands
 
-**`/plan-check:fast`** launches the plan-verifier agent for correctness, completeness, edge cases, error handling, assumptions, and test quality.
+**`/check:fast`** launches the verifier agent for correctness, completeness, edge cases, error handling, assumptions, and test quality. In plan mode, updates the plan. In code mode, prints findings.
 
-**`/plan-check:slow`** is the most thorough analysis. It launches 4 Sonnet agents in parallel (plan-verifier, breakage-analyst, test-reviewer, simplification-analyst) alongside a Haiku precedent discovery pass. The precedent candidates then feed into a Sonnet precedent-scanner that evaluates whether planned changes diverge from existing codebase patterns -- recommending the plan adopt existing approaches or refactor existing code to match better planned approaches. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. All confirmed amendments are applied to the plan.
+**`/check:slow`** is the most thorough analysis. In plan mode, it launches 5 Sonnet agents in parallel (verifier, breakage-analyst, test-reviewer, simplification-analyst, data-analyst) alongside a Haiku precedent discovery pass. In code mode, it launches 4 Sonnet agents (no data-analyst) plus Haiku discovery. The precedent candidates then feed into a Sonnet precedent-scanner that evaluates whether changes diverge from existing codebase patterns. After deduplication, a second wave of Haiku agents re-evaluates Critical and High findings. In plan mode, all confirmed amendments are applied to the plan. In code mode, findings are printed as a report.
 
 ## Agents
 
 | Agent                      | Prefix | Color  | Focus                                                              |
 | -------------------------- | ------ | ------ | ------------------------------------------------------------------ |
-| **plan-verifier**          | VFY    | yellow | Correctness, completeness, edge cases, assumptions, test quality   |
+| **verifier**               | VFY    | yellow | Correctness, completeness, edge cases, assumptions, test quality   |
 | **breakage-analyst**       | BRK    | red    | Caller breakage, interface changes, import cascades, test breakage |
 | **test-reviewer**          | TST    | cyan   | Test coverage, proposed test quality, missing scenarios, smells    |
 | **simplification-analyst** | SMP    | purple | Code reuse, over-engineering, pattern conformance, consolidation   |
 | **precedent-scanner**      | PRC    | blue   | Codebase precedent, approach divergence, bidirectional improvement |
+| **data-analyst**           | DAT    | green  | Database impact, schema concerns, data integrity (plan mode only)  |
 
 ## Plan Amendment Model
 
-Agents are read-only -- they analyze the codebase and return structured findings with plan amendments. The orchestrating command (the main Claude thread) collects amendments and edits the plan file.
+In plan mode, agents are read-only -- they analyze the codebase and return structured findings with plan amendments. The orchestrating command (the main Claude thread) collects amendments and edits the plan file.
 
 Each amendment specifies an operation (`add`, `replace`, `remove`, or `append-section`), a target location in the plan, and the content to apply. Amendments are processed in severity order (Critical first). Conflicts between amendments targeting the same section are resolved by applying the higher-severity amendment.
 
+In code mode, no amendments are produced. Each finding's Recommendation field is the actionable output.
+
 ## Confidence Threshold
 
-In `/plan-check:slow`, the second wave of Haiku agents re-evaluates Critical and High findings. Findings below 60% confidence are filtered out after the second wave.
-
-## Migration from v1
-
-| v1 Command           | v2 Equivalent      |
-| -------------------- | ------------------ |
-| `/plan-check:all`    | `/plan-check:slow` |
-| `/plan-check:review` | `/plan-check:slow` |
-
-Key differences in v2:
-- Commands edit the plan file directly instead of producing standalone reports
-- All severity levels are addressed (Low through Critical), not just reported
-- New agents: plan-verifier (VFY), breakage-analyst (BRK), test-reviewer (TST), simplification-analyst (SMP)
-- Removed agents: gap-analyst (GAP), code-impact-analyst (IMP), feasibility-risk-analyst (RSK)
-
-## Reinstall
-
-Clean removal and reinstall in one shot:
-
-```bash
-claude plugin uninstall plan-check@claude-plan-check \
-  && claude plugin marketplace remove claude-plan-check \
-  && rm -rf ~/.claude/plugins/cache/claude-plan-check \
-  && claude plugin marketplace add bissli/claude-plan-check \
-  && claude plugin install plan-check@claude-plan-check
-```
+In `/check:slow`, the second wave of Haiku agents re-evaluates Critical and High findings. Findings below 60% confidence are filtered out after the second wave.
 
 ## Uninstallation
 
-To fully remove the plugin:
-
 ```bash
-claude plugin uninstall plan-check@claude-plan-check \
-  && claude plugin marketplace remove claude-plan-check \
-  && rm -rf ~/.claude/plugins/cache/claude-plan-check
+claude plugin uninstall check@claude-check \
+  && claude plugin marketplace remove claude-check \
+  && rm -rf ~/.claude/plugins/cache/claude-check
 ```
-
-Verify removal -- open `~/.claude/settings.json` and confirm:
-- `"plan-check@claude-plan-check"` is gone from `enabledPlugins`
-- `"claude-plan-check"` is gone from `extraKnownMarketplaces`
 
 ## License
 
