@@ -1,5 +1,5 @@
 ---
-name: data-analyst
+name: database-agent
 description: Identifies whether the plan involves a database or data store, verifies adequate data analysis has been performed, and fills gaps with read-only queries
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet

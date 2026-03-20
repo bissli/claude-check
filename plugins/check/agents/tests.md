@@ -1,5 +1,5 @@
 ---
-name: test-reviewer
+name: tests-agent
 description: Reviews test coverage, proposed test quality, missing test scenarios, and test design smells for the changes
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet

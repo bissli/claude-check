@@ -1,5 +1,5 @@
 ---
-name: simplification-analyst
+name: simplify-agent
 description: Identifies code reuse opportunities, over-engineering, pattern conformance issues, and consolidation possibilities in the changes
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet

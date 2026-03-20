@@ -1,5 +1,5 @@
 ---
-name: verifier
+name: verify-agent
 description: Verifies correctness, completeness, edge cases, error handling, assumptions, and test quality
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet

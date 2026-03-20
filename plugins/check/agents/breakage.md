@@ -1,5 +1,5 @@
 ---
-name: breakage-analyst
+name: breakage-agent
 description: Analyzes what existing code might break from the changes, traces callers, interface changes, import cascades, shared state, config drift, and test breakage
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet

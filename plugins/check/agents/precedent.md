@@ -1,5 +1,5 @@
 ---
-name: precedent-scanner
+name: precedent-agent
 description: Evaluates whether the changes duplicate, diverge from, or improve upon existing codebase patterns and implementations
 tools: Glob, Grep, LS, Read, NotebookRead, BashOutput
 model: sonnet

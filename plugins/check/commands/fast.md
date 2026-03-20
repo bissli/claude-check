@@ -6,7 +6,7 @@ description: Fast check -- verify correctness and update the plan or report code
 
 Quick verification for correctness, completeness, and assumptions. In plan mode, updates the plan to address findings. In code mode, reports findings on the diff.
 
-**Output convention**: When launching an agent, print its model in brackets after the description, e.g. `Launching verifier... [sonnet]`
+**Output convention**: When launching an agent, print its model in brackets after the description, e.g. `Launching verify-agent... [sonnet]`
 
 ## Step 1: Detect Input
 
@@ -17,7 +17,7 @@ Quick verification for correctness, completeness, and assumptions. In plan mode,
 
 ## Step 2: Verification
 
-Launch the **verifier** agent, passing it:
+Launch the **verify-agent** agent, passing it:
 - **Plan mode**: the full plan text and the plan file path
 - **Code mode**: the DIFF_TEXT
 

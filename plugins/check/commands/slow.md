@@ -6,7 +6,7 @@ description: Comprehensive analysis combining verification, breakage, test revie
 
 Run a comprehensive multi-agent analysis with precedent scanning and second-wave validation. In plan mode, updates the plan to address findings. In code mode, reports findings on the diff.
 
-**Output convention**: When launching an agent, print its model in brackets after the description, e.g. `Launching verifier... [sonnet]` or `Launching precedent discovery... [haiku]`
+**Output convention**: When launching an agent, print its model in brackets after the description, e.g. `Launching verify-agent... [sonnet]` or `Launching precedent discovery... [haiku]`
 
 ## Step 1: Detect Input
 
@@ -21,29 +21,29 @@ Launch agents in parallel, passing each the full plan text and plan file path (p
 
 **Plan mode** -- launch all 7 tasks in parallel:
 
-1. **verifier** (VFY prefix): Full verification -- correctness, completeness, edge cases, error handling, assumptions. If the project has tests (glob for `test_*`, `*_test.*`, `*_spec.*`, `tests/`, `__tests__/`, `spec/` patterns), emphasize test quality.
+1. **verify-agent** (VFY prefix): Full verification -- correctness, completeness, edge cases, error handling, assumptions. If the project has tests (glob for `test_*`, `*_test.*`, `*_spec.*`, `tests/`, `__tests__/`, `spec/` patterns), emphasize test quality.
 
-2. **breakage-analyst** (BRK prefix): Full breakage analysis -- caller analysis, interface changes, import cascades, shared state, config drift, test breakage, regression test recommendations.
+2. **breakage-agent** (BRK prefix): Full breakage analysis -- caller analysis, interface changes, import cascades, shared state, config drift, test breakage, regression test recommendations.
 
-3. **test-reviewer** (TST prefix): Test coverage and quality review -- existing coverage, proposed test quality, missing scenarios, test design smells.
+3. **tests-agent** (TST prefix): Test coverage and quality review -- existing coverage, proposed test quality, missing scenarios, test design smells.
 
-4. **simplification-analyst** (SMP prefix): Over-engineering and reuse -- code reuse opportunities, unnecessary abstractions, pattern conformance, consolidation.
+4. **simplify-agent** (SMP prefix): Over-engineering and reuse -- code reuse opportunities, unnecessary abstractions, pattern conformance, consolidation.
 
-5. **data-analyst** (DAT prefix): If the plan references or implies a database or data store, check whether adequate data analysis (before/after impact, schema inspection, affected row counts, etc.) has already been performed. If gaps exist, run read-only queries to fill them. If the plan has no database involvement, return no findings.
+5. **database-agent** (DAT prefix): If the plan references or implies a database or data store, check whether adequate data analysis (before/after impact, schema inspection, affected row counts, etc.) has already been performed. If gaps exist, run read-only queries to fill them. If the plan has no database involvement, return no findings.
 
 6. **Precedent discovery** (Haiku agent): For each file in the changes, search the codebase for similar implementations. For each change, grep for similar function names, class names, patterns, imports, and approaches. Build a candidate list pairing each change with existing codebase locations that solve similar problems. Return the candidate list with file paths and brief descriptions of each existing approach.
 
-**Code mode** -- launch 5 tasks in parallel (no data-analyst):
+**Code mode** -- launch 5 tasks in parallel (no database-agent):
 
-1. **verifier** (VFY prefix): Same as above.
-2. **breakage-analyst** (BRK prefix): Same as above.
-3. **test-reviewer** (TST prefix): Same as above.
-4. **simplification-analyst** (SMP prefix): Same as above.
+1. **verify-agent** (VFY prefix): Same as above.
+2. **breakage-agent** (BRK prefix): Same as above.
+3. **tests-agent** (TST prefix): Same as above.
+4. **simplify-agent** (SMP prefix): Same as above.
 5. **Precedent discovery** (Haiku agent): Same as above, but using files touched in the diff.
 
 ## Step 3: Precedent Analysis (Sonnet agent)
 
-After Step 2 completes, launch the **precedent-scanner** agent (PRC prefix). Pass it:
+After Step 2 completes, launch the **precedent-agent** agent (PRC prefix). Pass it:
 - Plan mode: the full plan text and plan file path
 - Code mode: the DIFF_TEXT
 - The precedent candidate list from the Haiku discovery agent in Step 2
@@ -84,12 +84,12 @@ After all second-wave agents complete:
 2. Collect all confirmed amendments from all agents
 3. Apply ALL amendments (every severity level -- Low through Critical), processing in severity order (Critical first, then High, Medium, Low). If two amendments target the same plan section with incompatible operations, apply the higher-severity amendment and print a note flagging the conflict.
 4. Address all findings in the plan:
-   - Fix correctness issues (from verifier)
-   - Add regression tests (from breakage-analyst)
-   - Add missing test items (from test-reviewer)
-   - Simplify over-engineered steps (from simplification-analyst)
-   - Adopt existing patterns or add refactoring steps (from precedent-scanner)
-   - Address data concerns or add data verification steps (from data-analyst)
+   - Fix correctness issues (from verify-agent)
+   - Add regression tests (from breakage-agent)
+   - Add missing test items (from tests-agent)
+   - Simplify over-engineered steps (from simplify-agent)
+   - Adopt existing patterns or add refactoring steps (from precedent-agent)
+   - Address data concerns or add data verification steps (from database-agent)
 5. Append a "Slow Analysis Notes" section listing all findings with:
    - Finding ID, severity, description
    - Disposition: addressed | merged (with other finding ID) | downgraded (from original severity)
